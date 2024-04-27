@@ -15,7 +15,8 @@ RUN pip install --no-cache-dir \
     torch \
     onnxruntime-gpu \
     numpy \
-    sentencepiece
+    sentencepiece \
+    gradio
 
 # Клонування репозиторію та підмодулів
 WORKDIR /app
@@ -28,8 +29,14 @@ COPY llama-2-onnx-7B_FT_float16/ONNX/LlamaV2_7B_FT_float16.onnx ONNX/LlamaV2_7B_
 COPY llama-2-onnx-7B_FT_float16/embeddings.pth embeddings.pth
 COPY llama-2-onnx-7B_FT_float16/tokenizer.model tokenizer.model
 
-# Експорт порту для доступу до API
-EXPOSE 8000
+# Копіювання файлів чат-додатку
+COPY ChatApp/ .
 
-# Запуск сервера
+# Встановлення PYTHONPATH
+ENV PYTHONPATH=/app:$PYTHONPATH
+
+# Експорт порту для доступу до API
+EXPOSE 7860
+
+# Запуск сервера чату
 CMD ["python", "app.py"]
