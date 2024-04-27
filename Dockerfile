@@ -21,13 +21,13 @@ RUN pip install --no-cache-dir \
 # Клонування репозиторію та підмодулів
 WORKDIR /app
 RUN git clone https://github.com/kroschu/Llama-2-Onnx.git .
-RUN git submodule init llama-2-onnx-7B_float16
-RUN git submodule update llama-2-onnx-7B_float16
+RUN git submodule init llama-2-onnx-float16
+RUN git submodule update llama-2-onnx-float16
 
 # Копіювання конфігураційних файлів та ONNX моделі
-COPY llama-2-onnx-7B_float16/ONNX/LlamaV2_7B_float16.onnx ONNX/LlamaV2_7B_float16.onnx
-COPY llama-2-onnx-7B_float16/embeddings.pth embeddings.pth
-COPY llama-2-onnx-7B_float16/tokenizer.model tokenizer.model
+COPY llama-2-onnx-float16/ONNX/LlamaV2_float16.onnx ONNX/LlamaV2_float16.onnx
+COPY llama-2-onnx-float16/embeddings.pth embeddings.pth
+COPY llama-2-onnx-float16/tokenizer.model tokenizer.model
 
 # Копіювання файлів чат-додатку
 COPY ChatApp/ .
