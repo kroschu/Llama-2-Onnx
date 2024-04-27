@@ -1,6 +1,6 @@
 FROM python:3.9-slim-buster
 
-# Встановлення необхідних пакетів та git-lfs
+# Install necessary packages and git-lfs
 RUN apt-get update && apt-get install -y \
     build-essential \
     curl \
@@ -10,33 +10,47 @@ RUN apt-get update && apt-get install -y \
     libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Встановлення залежностей
+# Install dependencies
 RUN pip install --no-cache-dir \
     torch \
     onnxruntime-gpu \
     numpy \
     sentencepiece \
-    gradio
+    gradio \
+    mdtex2html \
+    pypinyin \
+    tiktoken \
+    socksio \
+    colorama \
+    duckduckgo_search \
+    Pygments \
+    llama_index \
+    langchain \
+    markdown2 \
+    peft \
+    transformers \
+    SentencePiece \
+    onnxruntime-gpu
 
-# Клонування репозиторію та підмодулів
+# Clone repository and submodules
 WORKDIR /app
-RUN git clone https://github.com/kroschu/Llama-2-Onnx.git .
-RUN git submodule init llama-2-onnx-float16
-RUN git submodule update llama-2-onnx-float16
+RUN git clone -b dev https://github.com/camenduru/Llama-2-Onnx.git .
+RUN rm -rf /app/Llama-2-Onnx/7B_FT_float16
+RUN git clone https://huggingface.co/4bit/7B_FT_float16 /app/Llama-2-Onnx/7B_FT_float16
 
-# Копіювання конфігураційних файлів та ONNX моделі
-COPY llama-2-onnx-float16/ONNX/LlamaV2_float16.onnx ONNX/LlamaV2_float16.onnx
-COPY llama-2-onnx-float16/embeddings.pth embeddings.pth
-COPY llama-2-onnx-float16/tokenizer.model tokenizer.model
+# Copy configuration files and ONNX model
+COPY llama-2-onnx/7B_FT_float16/ONNX/LlamaV2_7B_float16.onnx ONNX/LlamaV2_7B_float16.onnx
+COPY llama-2-onnx/7B_FT_float16/embeddings.pth embeddings.pth
+COPY llama-2-onnx/7B_FT_float16/tokenizer.model tokenizer.model
 
-# Копіювання файлів чат-додатку
+# Copy chat app files
 COPY ChatApp/ .
 
-# Встановлення PYTHONPATH
+# Set PYTHONPATH
 ENV PYTHONPATH=/app:$PYTHONPATH
 
-# Експорт порту для доступу до API
+# Expose port for API access
 EXPOSE 7860
 
-# Запуск сервера чату
+# Run chat server
 CMD ["python", "app.py"]
